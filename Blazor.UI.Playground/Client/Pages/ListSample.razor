@@ -1,0 +1,28 @@
+﻿@using Blazor.UI.List
+@using Blazor.UI.Playground.Shared;
+@page "/listsample"
+@inject HttpClient Http
+
+@attribute [NavMenuPage("List", "oi oi-list-rich")]
+
+<PageTitle>List</PageTitle>
+
+<h1>List</h1>
+
+<List Context="forecast" Items="@forecasts">
+    <ItemContent>
+        <div> date: @forecast.Date summary: @forecast.Summary </div>
+    </ItemContent>
+    <Placeholder>
+        <div>Loading..</div>
+    </Placeholder>
+</List>
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("/api/forecasts");
+    }
+}

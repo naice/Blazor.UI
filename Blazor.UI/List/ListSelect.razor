@@ -1,0 +1,72 @@
+﻿@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+@typeparam TItem where TItem : class
+
+<List TItem="TItem" Items="@Items" ItemsProvider="@ItemsProvider" Placeholder="@Placeholder">
+    <div @onclick="() => SelectedItem = context" class="@(SelectedItem == context ? SelectedItemCSS : "")">
+        @_itemTemplate?.Invoke(context)
+    </div>
+</List>
+
+@code {
+    /// <summary>
+    /// Gets or sets the css class applied to the item click container.
+    /// </summary>
+    [Parameter]
+    public string SelectedItemCSS { get; set; } = "blazor-ui-list__selected-item";
+
+    /// <summary>
+    /// Gets or sets the function providing items to the list.
+    /// </summary>
+    [Parameter]
+    public ItemsProviderDelegate<TItem>? ItemsProvider { get; set; }
+
+    /// <summary>
+    /// Gets or sets the fixed item source.
+    /// </summary>
+    [Parameter]
+    public ICollection<TItem>? Items { get; set; }
+
+    /// <summary>
+    /// Gets or sets the item template for the list.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the item template for the list.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<TItem>? ItemContent { get; set; }
+
+    private RenderFragment<TItem>? _itemTemplate => ItemContent ?? ChildContent;
+
+    /// <summary>
+    /// Gets or sets the template for items that have not yet been loaded in memory.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<PlaceholderContext>? Placeholder { get; set; }
+
+    private TItem? _selectedItem;
+
+    /// <summary>
+    /// Gets or sets the selected item.
+    /// </summary>
+    [Parameter]
+    public TItem? SelectedItem
+    {
+        get => _selectedItem;
+        set
+        {
+            if (_selectedItem == value) return;
+            _selectedItem = value;
+            SelectedItemChanged.InvokeAsync(value);
+        }
+    }
+
+    /// <summary>
+    /// Emitted when the <see cref="SelectedItem"/> changed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<TItem> SelectedItemChanged { get; set; }
+}
