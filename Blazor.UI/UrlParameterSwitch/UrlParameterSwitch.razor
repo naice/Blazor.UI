@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+
+@inject IParameterTemplateEvaluator Evaluator
+@inject NavigationManager NavMan
+
+@implements IDisposable
+
+@typeparam TParameterValueType
+
+@if (ChildContent != null)
+{
+    @ChildContent(ParameterValue)
+}
+
+@code {
+    private readonly Type _parameterValueType = typeof(TParameterValueType);
+    private string? _lastEvaluatedUrl;
+    
+    [Parameter, EditorRequired] 
+    public string ParameterTemplate { get; set; } = "car/%*";
+
+    [Parameter] public RenderFragment<TParameterValueType?>? ChildContent { get; set; }
+    
+    [Parameter]
+    public TParameterValueType? ParameterValue { get; set; }
+    [Parameter]
+    public EventCallback<TParameterValueType?> ParameterValueChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        NavMan.LocationChanged += OnLocationChanged;
+    }
+
+    private async void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        await EvaluateUrl(e.Location, withStateChange: true);
+    }
+
+    private async Task EvaluateUrl(string url, bool withStateChange = false)
+    {
+        if (_lastEvaluatedUrl == NavMan.Uri)
+            return;
+        
+        ParameterValue = (TParameterValueType?)Evaluator.Evaluate(
+            ParameterTemplate, 
+            url, 
+            _parameterValueType);
+        if (ParameterValueChanged.HasDelegate)
+            await ParameterValueChanged.InvokeAsync(ParameterValue);
+
+        if (withStateChange)
+            StateHasChanged();
+        _lastEvaluatedUrl = url;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        await EvaluateUrl(NavMan.Uri);
+    }
+
+    public void Dispose()
+    {
+        NavMan.LocationChanged -= OnLocationChanged;
+    }
+
+}

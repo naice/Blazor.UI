@@ -3,8 +3,8 @@
 @typeparam TItem where TItem : class
 
 <List TItem="TItem" Items="@Items" ItemsProvider="@ItemsProvider" Placeholder="@Placeholder">
-    <div @onclick="() => SelectedItem = context" class="@(SelectedItem == context ? SelectedItemCSS : "")">
-        @_itemTemplate?.Invoke(context)
+    <div @onclick="() => SelectedItem = context" class="@(SelectedItem == context ? SelectedItemCss : "")">
+        @ItemTemplate?.Invoke(context)
     </div>
 </List>
 
@@ -13,7 +13,7 @@
     /// Gets or sets the css class applied to the item click container.
     /// </summary>
     [Parameter]
-    public string SelectedItemCSS { get; set; } = "blazor-ui-list__selected-item";
+    public string SelectedItemCss { get; set; } = "blazor-ui-list__selected-item";
 
     /// <summary>
     /// Gets or sets the function providing items to the list.
@@ -39,7 +39,7 @@
     [Parameter]
     public RenderFragment<TItem>? ItemContent { get; set; }
 
-    private RenderFragment<TItem>? _itemTemplate => ItemContent ?? ChildContent;
+    private RenderFragment<TItem>? ItemTemplate => ItemContent ?? ChildContent;
 
     /// <summary>
     /// Gets or sets the template for items that have not yet been loaded in memory.

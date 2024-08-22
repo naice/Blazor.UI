@@ -5,7 +5,7 @@
 <div class="blazor-ui-list">
     @if(ItemsProvider != null || Items != null)
     {
-        <Virtualize ItemsProvider="@ItemsProvider" Items="@Items" Placeholder="@Placeholder" ItemContent="@_itemTemplate" />
+        <Virtualize ItemsProvider="@ItemsProvider" Items="@Items" Placeholder="@Placeholder" ItemContent="@ItemTemplate" />
     }    
 </div>
 
@@ -34,7 +34,7 @@
     [Parameter]
     public RenderFragment<TItem>? ItemContent { get; set; }
 
-    private RenderFragment<TItem>? _itemTemplate => ItemContent ?? ChildContent;
+    private RenderFragment<TItem>? ItemTemplate => ItemContent ?? ChildContent;
 
     /// <summary>
     /// Gets or sets the template for items that have not yet been loaded in memory.

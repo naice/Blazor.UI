@@ -1,0 +1,31 @@
+﻿@using Blazor.UI.UrlParameterSwitch
+@page "/urlparameterswitchsample/car/create"
+@page "/urlparameterswitchsample/car/edit/{carId:int}"
+@page "/urlparameterswitchsample/car/view/{carId:int}"
+
+@attribute [NavMenuPage("UrlParameterSwitch", "oi oi-list-rich")]
+
+<PageTitle>UrlParameterSwitch</PageTitle>
+
+<h1>UrlParameterSwitch</h1>
+
+<a href="/urlparameterswitchsample/car/create">create</a><br/>
+<a href="/urlparameterswitchsample/car/edit/123">edit 123</a><br/>
+<a href="/urlparameterswitchsample/car/view/123">view 123</a><br/>
+<br/>
+
+<UrlParameterSwitch TParameterValueType="ViewMode?" ParameterTemplate="car/%*">
+    <b>Mode is @context car id = @CarId</b>
+</UrlParameterSwitch>
+<br/>
+<br/>
+<UrlParameterSwitch TParameterValueType="string?" ParameterTemplate="car/%*">
+    <b>Mode is @context car id = @CarId</b>
+</UrlParameterSwitch>
+
+
+@code {
+    public enum ViewMode { Create, Edit, View }
+
+    [Parameter] public int? CarId { get; set; }
+}
